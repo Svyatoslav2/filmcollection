@@ -18,18 +18,31 @@ class FilmCollection:
         self.films: Dict[str, Film] = {}
 
     def AddFilm(self, film: Film) -> None:
-
-        if film.title not in self.films:
-            self.films[film.title] = film
-        else:
-            print("This film already exists in the collection")
-
-    def removeFilm(self, film: Film) -> None:
- 
         if film.title in self.films:
-            del self.films[film.title]
+            existing = self.films[film.title]
+            if existing.year == film.year and existing.company == film.company:
+                print("This exact film already exists in the collection")
+                return
+            else:
+                new_key = f"{film.title} ({film.year}, {film.company})"
+                self.films[new_key] = film
+                print("Added film with same title but different year/company")
+                return
         else:
-            print("This film doesn't exist in the collection")
+            self.films[film.title] = film
+
+
+    def removeFilm(self, title: str, year: int, company: str) -> None:
+        key_to_remove = None
+        for key, film in self.films.items():
+            if film.title == title and film.year == year and film.company == company:
+                key_to_remove = key
+                break
+        if key_to_remove:
+            del self.films[key_to_remove]
+        else:
+            print("Film not found in the collection.")
+
 
     def findFilmByDate(self, year: int) -> None:
 
@@ -116,10 +129,10 @@ def main():
     
     elif choice == '2':
         title = input("Enter film title to remove: ")
-        if title in collection.films:
-            collection.removeFilm(collection.films[title])
-        else:
-            print("Film not found in the collection.")
+        year = input("Enter film year to remove: ")
+        company = input("Enter film company to remove: ")
+        collection.removeFilm(title,int(year),company)
+        
     
     elif choice == '3':
         try:
@@ -142,7 +155,7 @@ def main():
             print(film)
     
     elif choice == '7':
-        print("Exiting the program. Goodbye!")
+        print("Exiting the program")
         break
     
     else:
@@ -152,9 +165,3 @@ if __name__ == "__main__":
     main()
 
     
-
-
-
-
-if __name__ == "__main__":
-    main()
